@@ -10,8 +10,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _missileLeftPrefab = default;
     [SerializeField] private GameObject _missileRightPrefab = default;
     [SerializeField] private float _delai = 0.5f;
-    [SerializeField] private int _viesJoueur = 3;
     [SerializeField] private AudioClip _gunSound = default;
+    [SerializeField] private AudioClip _hurtSound = default;
     [SerializeField] private AudioClip _missileSound = default;
     [SerializeField] private AudioClip _endSound = default;
     [SerializeField] private GameObject _mortPrefab = default;
@@ -19,6 +19,11 @@ public class Player : MonoBehaviour
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
     private Animator _anim;
+
+    public LinearIndicator linearIndicator;
+    public float minHealth = 0f;
+    public float maxHealth = 100f;
+    public float currentHealth = 100f;
 
     private float _vitesseInitiale;
     private float _canFire = -1;
@@ -34,12 +39,18 @@ public class Player : MonoBehaviour
     void Start()
     {
         transform.position = new Vector3(0f, -3f, 0f);  // position initiale du joueur
+
+        linearIndicator.SetupIndicator(minHealth, maxHealth);
+        linearIndicator.SetValue(currentHealth);
     }
 
     void Update()
     {
         Move();
         Tir();
+
+        currentHealth = Mathf.Clamp(currentHealth, minHealth, maxHealth);
+        linearIndicator.SetValue(currentHealth);
     }
 
     // Méthode qui gère le tir du joueur ainsi que le délai entre chaque tir
@@ -124,34 +135,31 @@ public class Player : MonoBehaviour
     public void Degats()
     {
 
-        _viesJoueur--;
+        currentHealth -= 20;
         _uiManager.EnleverScore(100);
+        AudioSource.PlayClipAtPoint(_hurtSound, Camera.main.transform.position);
 
-        if (_viesJoueur == 2)
-            {
-                _uiManager.ChangeLivesDisplayImage(_viesJoueur);
-            }
-        else if (_viesJoueur == 1)
-            {
-                _uiManager.ChangeLivesDisplayImage(_viesJoueur);
-            }
-
-        if (_viesJoueur < 1)
-        {
-            _uiManager.ChangeLivesDisplayImage(_viesJoueur);
+        if (currentHealth == 0) 
+        { 
             _spawnManager.mortJoueur();
             Instantiate(_mortPrefab, transform.position, Quaternion.identity);
             AudioSource.PlayClipAtPoint(_endSound, Camera.main.transform.position, 0.8f);
             Destroy(this.gameObject);
+
             StartCoroutine(GameOver());
-        }
+        }      
 
     }
 
     IEnumerator GameOver()
     {
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(2);
         SceneManager.LoadScene(2);
+    }
+
+    public float getHealth()
+    {
+        return currentHealth;
     }
 
 }

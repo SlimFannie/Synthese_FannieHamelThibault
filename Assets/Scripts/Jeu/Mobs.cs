@@ -4,7 +4,7 @@ using UnityEngine;
 public class Mobs : MonoBehaviour
 {
 	static int AnimatorWalk = Animator.StringToHash("Walk");
-	static int AnimatorAttack = Animator.StringToHash("Attack");
+
 	Animator _animator;
 	void Awake()
 	{
@@ -27,15 +27,6 @@ public class Mobs : MonoBehaviour
 
 			_animator.SetBool(AnimatorWalk, false);
 			yield return new WaitForSeconds(1f);
-
-			_animator.SetTrigger(AnimatorAttack);
-			yield return new WaitForSeconds(1f);
-
-			_animator.SetTrigger(AnimatorAttack);
-			yield return new WaitForSeconds(1f);
-
-			_animator.SetTrigger(AnimatorAttack);
-			yield return new WaitForSeconds(5f);
 		}
 	}
 }

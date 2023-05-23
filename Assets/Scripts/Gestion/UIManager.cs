@@ -10,25 +10,22 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _txtScore = default;
     [SerializeField] private TextMeshProUGUI _txtTime = default;
-    [SerializeField] private Image _livesDisplayImage = default;
-    [SerializeField] private Sprite[] _liveSprites = default;
     [SerializeField] private GameObject _pausePanel = default;
-
+    
     [SerializeField] private float _vitesseEnnemi = 1f;
     [SerializeField] private float _augVitesseParNiveau = 1f;
-    [SerializeField] private int _pointageAugmentation = 500;
 
+    private Player player;
     private int _score = 0;
     private float currentTime = 0.0f;
-    private bool _estChanger = false;
     private bool _pauseOn = false;
 
     private void Start()
     {
+        player = FindObjectOfType<Player>();
         _score = 0;
         _pauseOn = false;
         Time.timeScale = 1;
-        ChangeLivesDisplayImage(3);
         UpdateScore();
     }
 
@@ -49,17 +46,12 @@ public class UIManager : MonoBehaviour
             _pauseOn = false;
         }
 
-        if (_score % _pointageAugmentation == 0 && _score != 0 && _estChanger == false)
-        {
-            AugmentVitesseEnnemi();
-            _estChanger = true;
-        }
-        else if (_score % _pointageAugmentation != 0)
-        {
-            _estChanger = false;
-        }
-
         UpdateTime();
+
+        if (player.getHealth() == 0)
+        {
+            StartCoroutine(GameOver());
+        }
 
     }
 
@@ -78,14 +70,14 @@ public class UIManager : MonoBehaviour
         _txtTime.text = System.TimeSpan.FromSeconds(currentTime).ToString("mm':'ss");
     }
 
-    private void AugmentVitesseEnnemi()
-    {
-        _vitesseEnnemi += _augVitesseParNiveau;
-    }
-
     public int getScore()
     {
         return _score;
+    }
+
+    public float getTime()
+    {
+        return currentTime;
     }
 
     public void AjouterScore(int points)
@@ -100,28 +92,15 @@ public class UIManager : MonoBehaviour
         UpdateScore();
     }
 
-    public void ChangeLivesDisplayImage(int noImage)
+    public void AugmenterVitesse()
     {
-        if (noImage < 0)
-        {
-            noImage = 0;
-        }
-        _livesDisplayImage.sprite = _liveSprites[noImage];
-
-        // Si le joueur n'a plus de vie on lance la séquence de fin de partie
-        if (noImage == 0)
-        {
-            PlayerPrefs.SetInt("Score", _score);
-            PlayerPrefs.SetFloat("Time", currentTime);
-            PlayerPrefs.Save();
-            StartCoroutine("FinPartie");
-        }
+        StartCoroutine("VitesseUp");
     }
 
-    IEnumerator FinPartie()
+    IEnumerator VitesseUp()
     {
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene(2);
+        yield return new WaitForSeconds(10f);
+        _vitesseEnnemi += _augVitesseParNiveau;
     }
 
     public void ResumeGame()
@@ -134,6 +113,18 @@ public class UIManager : MonoBehaviour
     public void ChargerDepart()
     {
         SceneManager.LoadScene(0);
+    }
+
+    IEnumerator GameOver()
+    {
+
+        PlayerPrefs.SetInt("Score", getScore());
+        PlayerPrefs.SetFloat("Time", getTime());
+        PlayerPrefs.Save();
+
+        yield return new WaitForSeconds(3);
+        SceneManager.LoadScene(2);
+
     }
 
     public float getVitesseEnnemi()

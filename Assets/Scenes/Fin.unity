@@ -665,7 +665,6 @@ GameObject:
   - component: {fileID: 814281554}
   - component: {fileID: 814281553}
   - component: {fileID: 814281558}
-  - component: {fileID: 814281557}
   - component: {fileID: 814281559}
   m_Layer: 5
   m_Name: Canvas
@@ -760,26 +759,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &814281557
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 814281552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd88933cd1e0e414a9004eabe72132c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _txtScore: {fileID: 0}
-  _txtTime: {fileID: 0}
-  _livesDisplayImage: {fileID: 0}
-  _liveSprites: []
-  _pausePanel: {fileID: 0}
-  _vitesseEnnemi: 1
-  _augVitesseParNiveau: 1
-  _pointageAugmentation: 500
 --- !u!114 &814281558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1555,9 +1534,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 814281557}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: ChargerDepart
+      - m_Target: {fileID: 814281558}
+        m_TargetAssemblyTypeName: GestionScene, Assembly-CSharp
+        m_MethodName: RetourDepart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
